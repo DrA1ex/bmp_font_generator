@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bitmap Font Generator</title>
+
+    <link href="style.css" rel="stylesheet">
+    <script src="index.js" type="module"></script>
+</head>
+<body>
+
+<div class="container">
+    <canvas id="cEditor" style="grid-row: 1; grid-column: 1;"></canvas>
+    <canvas id="cOverlay" style="grid-row: 1; grid-column: 1;"></canvas>
+
+    <canvas id="cPreview" style="grid-row: 2;"></canvas>
+
+    <div style="grid-row: 3;">
+        <input id="fBitmap" type="file" accept="image/*">
+        <button id="bConvert">Convert</button>
+    </div>
+
+    <textarea id="tCode" style="grid-row: 4;" rows="20" readonly></textarea>
+</div>
+
+</body>
+</html>
