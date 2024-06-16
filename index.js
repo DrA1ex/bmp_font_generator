@@ -195,31 +195,36 @@ function convert() {
             offset: binary.length * (padding / 8),
             width: size,
             height,
-            xOffset: 3,
+            xOffset: 2,
             yOffset: -height,
             xAdv: size
-        })
+        });
+
+        let glyphData = 0x0;
+        let bitIndex = 0;
 
         for (let y = 0; y < height; y++) {
             const yOffset = y * width * 4;
-
-            let glyphData = 0x0;
             for (let x = 0; x < size; x++) {
-                if (x > 0 && x % padding === 0) {
+                if (bitIndex === padding) {
                     binary.push(glyphData);
+
                     glyphData = 0x0;
+                    bitIndex = 0;
                 }
 
                 const byteOffset = yOffset + xOffset + x * 4;
                 const bit = Math.max(data[byteOffset], data[byteOffset + 1], data[byteOffset + 2]) > threshold
                             && data[byteOffset + 3] > threshold ? 1 : 0;
 
-                if (bit) glyphData |= bit << (x % padding);
-            }
+                if (bit) glyphData |= bit << (padding - 1 - bitIndex);
 
-            if (size % padding > 0) {
-                binary.push(glyphData);
+                bitIndex++;
             }
+        }
+
+        if (bitIndex > 0) {
+            binary.push(glyphData);
         }
     }
 
@@ -235,7 +240,7 @@ function convert() {
 
     result += `const GFXglyph ${name}_glyphs[] PROGMEM = {\n`;
     for (const glyph of glyphs) {
-        result += `  { ${glyph.offset}, ${glyph.width}, ${glyph.height}, ${glyph.xAdv}, ${glyph.xOffset}, ${glyph.yOffset} },\n`
+        result += `  { ${glyph.offset}, ${glyph.width}, ${glyph.height}, ${glyph.xAdv + glyph.xOffset}, ${glyph.xOffset}, ${glyph.yOffset} },\n`
     }
     result += "};\n\n";
 
